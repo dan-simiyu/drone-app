@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DroneService {
     Drone registerDrone(Drone drone);
-    Medication loadDrone(Long id, Medication medication);
+    Medication loadDrone(Long droneId, Medication medication);
     List<Drone> getAvailableDrones();
-    Drone getDrone();
+    Drone getDrone(Long droneId);
 }
