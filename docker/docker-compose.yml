@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  drone-app-db:
+    container_name: drone_app_db
+    image: postgres
+    restart: always
+    networks:
+      - droneapp
+    volumes:
+      - droneapp:/var/lib/postgresql/data
+    ports:
+      - "5444:5432"
+    environment:
+      - POSTGRES_PASSWORD=s3cr3t
+      - POSTGRES_DB=drone_app
+
+  drone-app:
+    image: drone-app:0.0.1-SNAPSHOT
+    ports:
+      - "80:8080"
+    networks:
+      - droneapp
+    environment:
+      - DRONE_APP_HOST=drone_app_db
+      - DRONE_APP_PORT=5432
+      - DRONE_APP_USERNAME=postgres
+      - DRONE_APP_PASSWORD=s3cr3t
+
+volumes:
+  droneapp:
+networks:
+  droneapp:

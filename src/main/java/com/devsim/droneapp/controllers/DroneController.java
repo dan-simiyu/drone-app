@@ -1,5 +1,6 @@
 package com.devsim.droneapp.controllers;
 
+import com.devsim.droneapp.dtos.CreateDroneDto;
 import com.devsim.droneapp.entities.Drone;
 import com.devsim.droneapp.entities.Medication;
 import com.devsim.droneapp.services.DroneService;
@@ -18,7 +19,7 @@ public class DroneController {
     private  DroneService droneService;
 
     @PostMapping(value={"", "/"}, consumes = "application/json")
-    public ResponseEntity<Drone> register(@Valid @RequestBody Drone drone){
+    public ResponseEntity<Drone> register(@Valid @RequestBody CreateDroneDto drone){
         return ResponseEntity.status(HttpStatus.CREATED).body(droneService.registerDrone(drone));
     }
 
