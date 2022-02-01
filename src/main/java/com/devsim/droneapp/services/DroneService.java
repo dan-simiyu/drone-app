@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DroneService {
     CreateDroneDto registerDrone(CreateDroneDto createDroneDto);
-    MedicationDto loadDrone(Long droneId, MedicationDto medicationDto);
+    MedicationDto loadDrone(Long droneId, MedicationDto medicationDto) throws Exception;
     List<Drone> getAvailableDrones();
-    Drone getDrone(Long droneId);
+    Drone getDrone(Long droneId) throws Exception;
 }

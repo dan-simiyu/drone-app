@@ -6,6 +6,10 @@ import com.devsim.droneapp.dtos.MedicationDto;
 import com.devsim.droneapp.entities.Drone;
 import com.devsim.droneapp.entities.Medication;
 import com.devsim.droneapp.enums.State;
+import com.devsim.droneapp.exceptions.DroneLoadingStatusException;
+import com.devsim.droneapp.exceptions.DroneLowBatteryException;
+import com.devsim.droneapp.exceptions.DroneMaxWeightExceededException;
+import com.devsim.droneapp.exceptions.DroneNotFoundException;
 import com.devsim.droneapp.repositories.DroneRepository;
 import com.devsim.droneapp.repositories.MedicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +47,7 @@ public class DroneServiceImpl implements DroneService {
 
     @Override
     @Transactional
-    public MedicationDto loadDrone(Long droneId, MedicationDto medicationDto) {
+    public MedicationDto loadDrone(Long droneId, MedicationDto medicationDto) throws Exception {
 
         // fetchDrone
         Drone drone = getDrone(droneId);
@@ -77,7 +81,7 @@ public class DroneServiceImpl implements DroneService {
         return medicationDto;
     }
 
-    private void validateDroneWeight(Drone drone, MedicationDto medicationDto) throws IllegalArgumentException{
+    private void validateDroneWeight(Drone drone, MedicationDto medicationDto) throws DroneMaxWeightExceededException {
         int currentDroneWeight = Optional.ofNullable(drone.getMedication())
                 .orElse(Collections.emptyList())
                 .stream()
@@ -85,20 +89,20 @@ public class DroneServiceImpl implements DroneService {
                 .reduce(0, Integer::sum);
 
         if((currentDroneWeight + medicationDto.getWeight()) > drone.getWeightLimit()){
-            throw new IllegalArgumentException("Drone maximum loading weight exceeded");
+            throw new DroneMaxWeightExceededException("Drone maximum loading weight exceeded");
         }
     }
 
-    private void validateDroneBatteryLevel(Drone drone) throws IllegalArgumentException{
+    private void validateDroneBatteryLevel(Drone drone) throws DroneLowBatteryException {
         DroneConfiguration.Battery battery = droneConfiguration.getBattery();
         if (drone.getBatteryCapacity() < battery.getLevel()) {
-            throw new IllegalArgumentException("Drone battery is low");
+            throw new DroneLowBatteryException("Drone battery level is low");
         }
     }
 
-    private void validateDroneState(Drone drone) throws IllegalArgumentException{
+    private void validateDroneState(Drone drone) throws DroneLoadingStatusException {
         if (!drone.getState().equals(State.IDLE) && !drone.getState().equals(State.LOADING)) {
-            throw new IllegalArgumentException("Can't load drone while not in state IDLE/LOADING");
+            throw new DroneLoadingStatusException("Can't load drone while not in state IDLE/LOADING");
         }
     }
 
@@ -109,9 +113,9 @@ public class DroneServiceImpl implements DroneService {
     }
 
     @Override
-    public Drone getDrone(Long droneId) throws IllegalArgumentException {
+    public Drone getDrone(Long droneId) throws DroneNotFoundException {
         Drone drone = droneRepository.findById(droneId)
-                .orElseThrow(() -> new IllegalArgumentException("Drone with id " + droneId + " not found"));
+                .orElseThrow(DroneNotFoundException::new);
 
         return drone;
     }
