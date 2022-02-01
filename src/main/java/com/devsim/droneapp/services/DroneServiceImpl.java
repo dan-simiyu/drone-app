@@ -2,6 +2,7 @@ package com.devsim.droneapp.services;
 
 import com.devsim.droneapp.configuration.DroneConfiguration;
 import com.devsim.droneapp.dtos.CreateDroneDto;
+import com.devsim.droneapp.dtos.MedicationDto;
 import com.devsim.droneapp.entities.Drone;
 import com.devsim.droneapp.entities.Medication;
 import com.devsim.droneapp.enums.State;
@@ -23,75 +24,80 @@ public class DroneServiceImpl implements DroneService {
     private final DroneConfiguration droneConfiguration;
 
 
-    private static final int LOW_BATTERY_LEVEL = 25;
-
     @Override
-    public Drone registerDrone(Drone drone) {
-        return droneRepository.save(drone);
-    }
+    public CreateDroneDto registerDrone(CreateDroneDto createDroneDto) {
+        Drone drone = new Drone();
 
-    @Override
-    public Drone registerDrone(CreateDroneDto createDroneDto) {
-        Drone drone = Drone.builder()
-                .serialNumber(createDroneDto.getSerialNumber())
-                .batteryCapacity(createDroneDto.getBatteryCapacity())
-                .model(createDroneDto.getModel())
-                .state(createDroneDto.getState())
-                .weightLimit(createDroneDto.getWeightLimit())
-                .build();
-        return registerDrone(drone);
+        drone.setSerialNumber(createDroneDto.getSerialNumber());
+        drone.setModel(createDroneDto.getModel());
+        drone.setWeightLimit(createDroneDto.getWeightLimit());
+        drone.setBatteryCapacity(createDroneDto.getBatteryCapacity());
+        drone.setState(State.IDLE);
+
+        droneRepository.save(drone);
+        createDroneDto.setId(drone.getId());
+        createDroneDto.setState(State.IDLE);
+
+        return createDroneDto;
     }
 
     @Override
     @Transactional
-    public Medication loadDrone(Long droneId, Medication medication) {
-        // fetchDrone(droneId)
-        // validateDroneState(drone)
-        // validateDroneBatteryLevel(drone)
-        // validateDroneWeight(drone, medication)
-        Drone drone = validateDroneLoading(droneId, medication);
+    public MedicationDto loadDrone(Long droneId, MedicationDto medicationDto) {
+
+        // fetchDrone
+        Drone drone = getDrone(droneId);
+
+        //only load for status IDLE/LOADING
+        validateDroneState(drone);
+
+        // check drone battery level
+        validateDroneBatteryLevel(drone);
+
+        // check drone max limit is not exceeded
+        validateDroneWeight(drone, medicationDto);
 
         if (drone.getState().equals(State.IDLE)) {
             drone.setState(State.LOADING);
             droneRepository.save(drone);
         }
 
+        Medication medication = new Medication(
+                medicationDto.getName(),
+                medicationDto.getWeight(),
+                medicationDto.getCode(),
+                medicationDto.getImage());
+
         medication.setDrone(drone);
+
         medicationRepository.save(medication);
 
-        return medication;
+        return medicationDto;
     }
 
-    private Drone validateDroneLoading(Long droneId, Medication medication) throws IllegalArgumentException {
-        /*Optional<Drone> optionalDrone = droneRepository.findById(droneId);
-
-        if(!optionalDrone.isPresent()){
-            throw new IllegalArgumentException("Drone not found");
-        }
-
-        Drone drone = optionalDrone.get();*/
-        Drone drone = droneRepository.findById(droneId)
-                .orElseThrow(() -> new IllegalArgumentException("Drone with id " + droneId + " not found"));
-
-        // immutable
-        int weightAllocatedThusFar = Optional.ofNullable(drone.getMedication())
+    private void validateDroneWeight(Drone drone, MedicationDto medicationDto) throws IllegalArgumentException{
+        int currentDroneWeight = Optional.ofNullable(drone.getMedication())
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(Medication::getWeight)
                 .reduce(0, Integer::sum);
 
-        //(medication.getWeight() + weightAllocatedThusFar) <= drone.getWeightLimit()
-
-        if (!drone.getState().equals(State.IDLE) && !drone.getState().equals(State.LOADING)) {
-            throw new IllegalArgumentException("Can't load drone while not in state IDLE/LOADING");
+        if((currentDroneWeight + medicationDto.getWeight()) <= drone.getWeightLimit()){
+            throw new IllegalArgumentException("Drone maximum loading weight exceeded");
         }
+    }
 
+    private void validateDroneBatteryLevel(Drone drone) throws IllegalArgumentException{
         DroneConfiguration.Battery battery = droneConfiguration.getBattery();
         if (drone.getBatteryCapacity() < battery.getLevel()) {
             throw new IllegalArgumentException("Drone battery is low");
         }
+    }
 
-        return drone;
+    private void validateDroneState(Drone drone) throws IllegalArgumentException{
+        if (!drone.getState().equals(State.IDLE) && !drone.getState().equals(State.LOADING)) {
+            throw new IllegalArgumentException("Can't load drone while not in state IDLE/LOADING");
+        }
     }
 
 
@@ -102,12 +108,9 @@ public class DroneServiceImpl implements DroneService {
 
     @Override
     public Drone getDrone(Long droneId) throws IllegalArgumentException {
-        Optional<Drone> optionalDrone = droneRepository.findById(droneId);
+        Drone drone = droneRepository.findById(droneId)
+                .orElseThrow(() -> new IllegalArgumentException("Drone with id " + droneId + " not found"));
 
-        if (optionalDrone.isPresent()) {
-            return optionalDrone.get();
-        } else {
-            throw new IllegalArgumentException("Drone not found");
-        }
+        return drone;
     }
 }

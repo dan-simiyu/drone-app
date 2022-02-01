@@ -2,27 +2,30 @@ package com.devsim.droneapp.dtos;
 
 import com.devsim.droneapp.enums.Model;
 import com.devsim.droneapp.enums.State;
-import com.devsim.droneapp.validations.SerialNumber;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Data
 public class CreateDroneDto {
-    @SerialNumber(regex = "[a-z]")
+
+    private long id;
+
     @NotBlank(message = "Serial number is mandatory")
+    @JsonProperty
     private String serialNumber;
 
+    @JsonProperty
     private Model model;
 
-    @Max(500)
+
+    @JsonProperty
     private int weightLimit;
 
-    @Min(0)
-    @Max(100)
+    @JsonProperty
     private int batteryCapacity;
 
     private State state;
+
 }

@@ -3,10 +3,7 @@ package com.devsim.droneapp.entities;
 import com.devsim.droneapp.enums.Model;
 import com.devsim.droneapp.enums.State;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
@@ -15,14 +12,11 @@ import java.util.List;
 
 @Entity
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "drones")
 public class Drone {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(unique = true)
@@ -47,6 +41,7 @@ public class Drone {
     @JsonManagedReference
     @OneToMany(mappedBy = "drone", fetch = FetchType.EAGER)
     private List<Medication> medication;
+
 
 
 }
