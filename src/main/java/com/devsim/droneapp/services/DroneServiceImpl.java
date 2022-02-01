@@ -65,12 +65,14 @@ public class DroneServiceImpl implements DroneService {
         Medication medication = new Medication();
 
         medication.setName(medicationDto.getName());
-        medication.setCode(medication.getCode());
-        medication.setWeight(medication.getWeight());
+        medication.setCode(medicationDto.getCode());
+        medication.setWeight(medicationDto.getWeight());
         medication.setImage(medicationDto.getImage());
         medication.setDrone(drone);
 
         medicationRepository.save(medication);
+
+        medicationDto.setId(medication.getId());
 
         return medicationDto;
     }

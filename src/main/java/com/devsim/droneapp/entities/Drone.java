@@ -8,18 +8,21 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Data
 @Table(name = "drones")
-public class Drone {
+public class Drone implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 100, nullable = false)
     @NotBlank(message = "Serial number is mandatory")
     private String serialNumber;
 
@@ -41,7 +44,5 @@ public class Drone {
     @JsonManagedReference
     @OneToMany(mappedBy = "drone", fetch = FetchType.EAGER)
     private List<Medication> medication;
-
-
 
 }
