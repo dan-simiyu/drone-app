@@ -48,7 +48,7 @@ public class DroneServiceImpl implements DroneService {
         // fetchDrone
         Drone drone = getDrone(droneId);
 
-        //only load for status IDLE/LOADING
+        //check drone status
         validateDroneState(drone);
 
         // check drone battery level
@@ -62,12 +62,12 @@ public class DroneServiceImpl implements DroneService {
             droneRepository.save(drone);
         }
 
-        Medication medication = new Medication(
-                medicationDto.getName(),
-                medicationDto.getWeight(),
-                medicationDto.getCode(),
-                medicationDto.getImage());
+        Medication medication = new Medication();
 
+        medication.setName(medicationDto.getName());
+        medication.setCode(medication.getCode());
+        medication.setWeight(medication.getWeight());
+        medication.setImage(medicationDto.getImage());
         medication.setDrone(drone);
 
         medicationRepository.save(medication);
@@ -82,7 +82,7 @@ public class DroneServiceImpl implements DroneService {
                 .map(Medication::getWeight)
                 .reduce(0, Integer::sum);
 
-        if((currentDroneWeight + medicationDto.getWeight()) <= drone.getWeightLimit()){
+        if((currentDroneWeight + medicationDto.getWeight()) > drone.getWeightLimit()){
             throw new IllegalArgumentException("Drone maximum loading weight exceeded");
         }
     }

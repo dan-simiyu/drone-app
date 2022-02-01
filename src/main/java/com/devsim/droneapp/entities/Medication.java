@@ -33,10 +33,4 @@ public class Medication {
     @JsonBackReference
     private Drone drone;
 
-    public Medication(String name, int weight, String code, String image) {
-        this.name = name;
-        this.weight = weight;
-        this.code = code;
-        this.image = image;
-    }
 }
