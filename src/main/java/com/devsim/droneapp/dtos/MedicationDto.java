@@ -1,14 +1,14 @@
 package com.devsim.droneapp.dtos;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
-public class MedicationDto {
 
-    private long id;
+public class MedicationDto {
 
     @NotBlank(message = "Medication name is required")
     @Pattern( regexp = "^[a-zA-Z0-9_\\-]+$", message="Name can only contain letters, numbers, '-', '_'")

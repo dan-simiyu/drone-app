@@ -14,8 +14,6 @@ import javax.validation.constraints.Size;
 @Builder
 public class CreateDroneDto {
 
-    private long id;
-
     @Size(min = 5, max = 100, message = "Serial Number must be between 5 and 100 characters")
     @NotBlank(message = "Drone serial number is required")
     @JsonProperty

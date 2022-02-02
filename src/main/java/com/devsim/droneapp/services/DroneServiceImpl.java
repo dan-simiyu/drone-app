@@ -39,7 +39,7 @@ public class DroneServiceImpl implements DroneService {
         drone.setState(State.IDLE);
 
         droneRepository.save(drone);
-        createDroneDto.setId(drone.getId());
+
         createDroneDto.setState(State.IDLE);
 
         return createDroneDto;
@@ -75,8 +75,6 @@ public class DroneServiceImpl implements DroneService {
         medication.setDrone(drone);
 
         medicationRepository.save(medication);
-
-        medicationDto.setId(medication.getId());
 
         return medicationDto;
     }

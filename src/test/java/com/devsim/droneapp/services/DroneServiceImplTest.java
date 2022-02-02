@@ -9,7 +9,6 @@ import com.devsim.droneapp.exceptions.DroneLoadingStatusException;
 import com.devsim.droneapp.exceptions.DroneLowBatteryException;
 import com.devsim.droneapp.repositories.DroneRepository;
 import com.devsim.droneapp.repositories.MedicationRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.verification.api.VerificationData;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -38,18 +36,18 @@ public class DroneServiceImplTest {
     @Mock
     private DroneConfiguration droneConfiguration;
 
+
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
 
-
-        when(droneConfiguration.getBattery()).then(invocationOnMock -> {
-            DroneConfiguration.Battery battery = mock(DroneConfiguration.Battery.class);
-            when(battery.getLevel()).thenReturn(25);
-
-            return battery;
-        });
-
+        MockitoAnnotations.openMocks(this);
         droneService = new DroneServiceImpl(droneRepository, medicationRepository, droneConfiguration);
+
+    }
+
+    void givenDroneExists(Drone drone) {
+        when(droneRepository.findById(1L))
+                .thenReturn(Optional.of(drone));
     }
 
     @ParameterizedTest
@@ -60,13 +58,13 @@ public class DroneServiceImplTest {
         drone.setId(1L);
         drone.setState(state);
 
-        when(droneRepository.findById(1L))
-                .thenReturn(Optional.of(drone));
+        givenDroneExists(drone);
+
+
 
         assertThrows(DroneLoadingStatusException.class,
-                () -> droneService.loadDrone(drone.getId(), new MedicationDto()));
+                () -> droneService.loadDrone(drone.getId(),new MedicationDto() ));
 
-        // verify(droneRepository.findById(1L), atMostOnce());
     }
 
     @Test
@@ -77,13 +75,20 @@ public class DroneServiceImplTest {
         drone.setState(State.IDLE);
         drone.setBatteryCapacity(24);
 
-        when(droneRepository.findById(1L))
-                .thenReturn(Optional.of(drone));
+        when(droneConfiguration.getBattery()).then(invocationOnMock -> {
+            DroneConfiguration.Battery battery = mock(DroneConfiguration.Battery.class);
+            when(battery.getLevel()).thenReturn(25);
+
+            return battery;
+        });
+
+        givenDroneExists(drone);
+
+
 
         assertThrows(DroneLowBatteryException.class,
                 () -> droneService.loadDrone(1L, new MedicationDto()));
     }
-
 
 
 

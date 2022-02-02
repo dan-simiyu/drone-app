@@ -1,6 +1,7 @@
 package com.devsim.droneapp.controllers;
 
 import com.devsim.droneapp.dtos.CreateDroneDto;
+import com.devsim.droneapp.dtos.MedicationDto;
 import com.devsim.droneapp.enums.Model;
 import com.devsim.droneapp.enums.State;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,8 +34,8 @@ public class DroneControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    @DisplayName("should successfully create drone")
-    public void testCreateDrone() throws Exception {
+    @DisplayName("should successfully register drone")
+    public void testRegisterDrone() throws Exception {
         CreateDroneDto dto = CreateDroneDto.builder()
                 .serialNumber("A-2022")
                 .batteryCapacity(100)
@@ -71,7 +73,6 @@ public class DroneControllerTest {
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().is(statusCode));
     }
-
 
 
 }
