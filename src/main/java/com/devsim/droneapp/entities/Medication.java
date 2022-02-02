@@ -19,16 +19,16 @@ public class Medication implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column
+    @Column(name = "weight", nullable = false)
     private int weight;
 
-    @Column
+    @Column(name = "code", nullable = false)
     private String code;
 
-    @Column
+    @Column(name = "image_url")
     private String image;
 
     @ManyToOne

@@ -28,7 +28,7 @@ public class DroneBatteryLevelScheduler {
         this.droneBatteryLevelAuditLogsRepo = droneBatteryAuditRepository;
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 60000, initialDelay = 60000)
     public void auditDroneBattery() {
         log.info("Running Drone Audit Log at {}", dateFormat.format(new Date()));
         if(!auditDroneBatteryStatus){

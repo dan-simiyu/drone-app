@@ -4,8 +4,6 @@ import com.devsim.droneapp.dtos.CreateDroneDto;
 import com.devsim.droneapp.dtos.MedicationDto;
 import com.devsim.droneapp.entities.Drone;
 import com.devsim.droneapp.services.DroneService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +15,14 @@ import java.util.List;
 @RequestMapping("api/drone")
 public class DroneController {
 
-    private  DroneService droneService;
+    private final  DroneService droneService;
 
     public DroneController(DroneService droneService) {
         this.droneService = droneService;
     }
 
-    public static final Logger logger = LoggerFactory.getLogger(DroneService.class);
     @PostMapping(value= "/save", consumes = "application/json")
-    public ResponseEntity<CreateDroneDto> registerDrone(@Valid @RequestBody CreateDroneDto createDroneDto){
+    public ResponseEntity<CreateDroneDto> registerDrone(@Valid @RequestBody CreateDroneDto createDroneDto) throws Exception{
         return ResponseEntity.status(HttpStatus.CREATED).body(droneService.registerDrone(createDroneDto));
     }
 

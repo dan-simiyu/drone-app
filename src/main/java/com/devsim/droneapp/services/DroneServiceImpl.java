@@ -29,7 +29,7 @@ public class DroneServiceImpl implements DroneService {
 
 
     @Override
-    public CreateDroneDto registerDrone(CreateDroneDto createDroneDto) {
+    public CreateDroneDto registerDrone(CreateDroneDto createDroneDto) throws Exception {
         Drone drone = new Drone();
 
         drone.setSerialNumber(createDroneDto.getSerialNumber());
@@ -114,9 +114,8 @@ public class DroneServiceImpl implements DroneService {
 
     @Override
     public Drone getDrone(Long droneId) throws DroneNotFoundException {
-        Drone drone = droneRepository.findById(droneId)
-                .orElseThrow(DroneNotFoundException::new);
 
-        return drone;
+        return droneRepository.findById(droneId)
+                .orElseThrow(DroneNotFoundException::new);
     }
 }

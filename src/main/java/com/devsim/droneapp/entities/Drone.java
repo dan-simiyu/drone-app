@@ -4,9 +4,10 @@ import com.devsim.droneapp.enums.Model;
 import com.devsim.droneapp.enums.State;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
@@ -22,25 +23,27 @@ public class Drone implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, length = 100, nullable = false)
+    @Column(name = "serial_number", unique = true, length = 100, nullable = false)
     @NotBlank(message = "Serial number is mandatory")
     private String serialNumber;
 
-    @Column()
+    @Column(name = "model", nullable = false)
     @Enumerated(EnumType.STRING)
     private Model model;
 
-    @Column()
+    @Column(name = "weight_limit", nullable = false)
     private int weightLimit;
 
-    @Column()
-    @Range(min = 0, max = 100)
+    @Column(name = "battery_capacity", nullable = false)
+    @Min(0)
+    @Max(100)
     private int batteryCapacity;
 
-    @Column()
+    @Column(name = "state", nullable = false )
     @Enumerated(EnumType.STRING)
     private State state;
 
+    @Column(name = "medications")
     @JsonManagedReference
     @OneToMany(mappedBy = "drone", fetch = FetchType.EAGER)
     private List<Medication> medication;
