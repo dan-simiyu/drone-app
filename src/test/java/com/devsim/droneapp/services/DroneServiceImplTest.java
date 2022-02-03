@@ -61,7 +61,6 @@ public class DroneServiceImplTest {
         givenDroneExists(drone);
 
 
-
         assertThrows(DroneLoadingStatusException.class,
                 () -> droneService.loadDrone(drone.getId(),new MedicationDto() ));
 
@@ -85,11 +84,9 @@ public class DroneServiceImplTest {
         givenDroneExists(drone);
 
 
-
         assertThrows(DroneLowBatteryException.class,
                 () -> droneService.loadDrone(1L, new MedicationDto()));
     }
-
 
 
 }

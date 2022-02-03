@@ -4,6 +4,7 @@ import com.devsim.droneapp.dtos.CreateDroneDto;
 import com.devsim.droneapp.dtos.MedicationDto;
 import com.devsim.droneapp.enums.Model;
 import com.devsim.droneapp.enums.State;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,30 +51,14 @@ public class DroneControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.serialNumber").exists())
+                .andExpect(jsonPath("$.serialNumber").isString())
+                .andExpect(jsonPath("$.weightLimit").exists())
+                .andExpect(jsonPath("$.weightLimit").value(500))
                 .andExpect(jsonPath("$.model").value(Model.HEAVYWEIGHT.name()))
                 .andExpect(jsonPath("$.batteryCapacity").value(100));
     }
 
-    @ParameterizedTest
-    @DisplayName("should create drone with valid serial-number")
-    @CsvSource({"A0000,201", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,400"})
-    public void testValidSerialNumber(String serialNumber, int statusCode) throws Exception {
-        CreateDroneDto dto = CreateDroneDto.builder()
-                .serialNumber(serialNumber)
-                .batteryCapacity(100)
-                .model(Model.HEAVYWEIGHT)
-                .state(State.IDLE)
-                .weightLimit(500)
-                .build();
-
-        this.mvc.perform(post("/api/drone/save")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto)))
-                .andExpect(status().is(statusCode));
-    }
 
 
 }

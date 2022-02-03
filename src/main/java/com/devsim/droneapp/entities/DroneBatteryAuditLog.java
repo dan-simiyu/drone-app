@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "drone_battery_audit_logs")
+@Table(name = "drone_battery_audit_logs", schema = "drone")
 public class DroneBatteryAuditLog implements Serializable {
     private static final long serialVersionUID = 1L;
 

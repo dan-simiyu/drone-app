@@ -14,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "drones")
+@Table(name = "drones", schema = "drone")
 public class Drone implements Serializable {
 
     private static final long serialVersionUID = 1L;
