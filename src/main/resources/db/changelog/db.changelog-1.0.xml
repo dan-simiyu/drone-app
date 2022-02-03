@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="devsim" id="changelog-1.0">
+    <changeSet author="daniel.simiyu" id="changelog-1.0">
         <createTable tableName="drones" schemaName="drone">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true"/>
@@ -60,7 +60,9 @@
             </column>
         </createTable>
         <rollback>
-            <dropTable tableName="employee"/>
+            <dropTable tableName="drones"/>
+            <dropTable tableName="medications"/>
+            <dropTable tableName="drone_battery_audit_logs"/>
         </rollback>
     </changeSet>
 

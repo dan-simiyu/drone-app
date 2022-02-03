@@ -10,7 +10,6 @@ import java.util.Date;
 @Data
 @Table(name = "drone_battery_audit_logs", schema = "drone")
 public class DroneBatteryAuditLog implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

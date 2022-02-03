@@ -17,8 +17,6 @@ import java.util.List;
 @Table(name = "drones", schema = "drone")
 public class Drone implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
